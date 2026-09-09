@@ -2,6 +2,7 @@ import React from 'react';
 import { X, Compass, User, Hash, Shield, CircleDot } from 'lucide-react';
 import { useTacticsStore } from '../../store/useTacticsStore';
 import { PlayerRole } from '../../types/tactics';
+import { useTranslation } from '../../i18n/useTranslation';
 
 export const PlayerInspector: React.FC = () => {
   const selectedTokenId = useTacticsStore((s) => s.selectedTokenId);
@@ -15,6 +16,8 @@ export const PlayerInspector: React.FC = () => {
   const playerPos = selectedTokenId && currentStep?.players[selectedTokenId] ? currentStep.players[selectedTokenId] : null;
   const hasBall = selectedTokenId ? currentStep?.ballAttachedTo === selectedTokenId : false;
 
+  const { t } = useTranslation();
+
   if (!selectedTokenId || !metadata || !playerPos) return null;
 
   const isHome = metadata.team === 'home';
@@ -24,6 +27,13 @@ export const PlayerInspector: React.FC = () => {
     const rad = (deg * Math.PI) / 180;
     setPlayerRotation(selectedTokenId, rad);
   };
+
+  const snaps = [
+    { label: t.inspector.snapEast, val: 0 },
+    { label: t.inspector.snapSouth, val: 90 },
+    { label: t.inspector.snapWest, val: 180 },
+    { label: t.inspector.snapNorth, val: 270 },
+  ];
 
   return (
     <div className="absolute top-16 right-4 z-40 w-72 bg-slate-900/95 backdrop-blur-xl border border-slate-800 rounded-xl p-3.5 shadow-2xl ring-1 ring-white/10 select-none animate-in fade-in slide-in-from-right-3 duration-150">
@@ -36,7 +46,7 @@ export const PlayerInspector: React.FC = () => {
             }`}
           />
           <span className="font-bold text-xs text-white">
-            {isHome ? 'Home Player' : 'Away Player'} ({selectedTokenId})
+            {isHome ? t.common.homePlayer : t.common.awayPlayer} ({selectedTokenId})
           </span>
         </div>
         <button
@@ -52,7 +62,7 @@ export const PlayerInspector: React.FC = () => {
         {/* Name input */}
         <div className="flex flex-col gap-1">
           <label className="text-[10px] font-semibold uppercase text-slate-400 flex items-center gap-1">
-            <User className="w-3 h-3 text-slate-400" /> Player Name / Role
+            <User className="w-3 h-3 text-slate-400" /> {t.inspector.playerNameRole}
           </label>
           <input
             type="text"
@@ -66,7 +76,7 @@ export const PlayerInspector: React.FC = () => {
         <div className="grid grid-cols-2 gap-2">
           <div className="flex flex-col gap-1">
             <label className="text-[10px] font-semibold uppercase text-slate-400 flex items-center gap-1">
-              <Hash className="w-3 h-3 text-slate-400" /> Number
+              <Hash className="w-3 h-3 text-slate-400" /> {t.inspector.number}
             </label>
             <input
               type="number"
@@ -80,15 +90,15 @@ export const PlayerInspector: React.FC = () => {
 
           <div className="flex flex-col gap-1">
             <label className="text-[10px] font-semibold uppercase text-slate-400 flex items-center gap-1">
-              <Shield className="w-3 h-3 text-slate-400" /> Position
+              <Shield className="w-3 h-3 text-slate-400" /> {t.inspector.position}
             </label>
             <select
               value={metadata.role}
               onChange={(e) => setPlayerInfo(selectedTokenId, { role: e.target.value as PlayerRole })}
               className="px-2.5 py-1.5 rounded-lg bg-slate-800/80 border border-slate-700 text-xs text-white focus:outline-none focus:border-red-500"
             >
-              <option value="GK">Goalkeeper (GK)</option>
-              <option value="FP">Field Player (FP)</option>
+              <option value="GK">{t.inspector.positionGK}</option>
+              <option value="FP">{t.inspector.positionFP}</option>
             </select>
           </div>
         </div>
@@ -97,7 +107,7 @@ export const PlayerInspector: React.FC = () => {
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center justify-between text-[10px] font-semibold uppercase text-slate-400">
             <span className="flex items-center gap-1">
-              <Compass className="w-3 h-3 text-slate-400" /> Facing Angle
+              <Compass className="w-3 h-3 text-slate-400" /> {t.inspector.facingAngle}
             </span>
             <span className="font-mono text-amber-400">{rotationDeg}°</span>
           </div>
@@ -111,12 +121,7 @@ export const PlayerInspector: React.FC = () => {
           />
           {/* Quick Facing Snaps */}
           <div className="grid grid-cols-4 gap-1">
-            {[
-              { label: '0° (E)', val: 0 },
-              { label: '90° (S)', val: 90 },
-              { label: '180° (W)', val: 180 },
-              { label: '270° (N)', val: 270 },
-            ].map((snap) => (
+            {snaps.map((snap) => (
               <button
                 key={snap.val}
                 onClick={() => handleRotationChange(snap.val)}
@@ -138,7 +143,7 @@ export const PlayerInspector: React.FC = () => {
           }`}
         >
           <CircleDot className={`w-3.5 h-3.5 ${hasBall ? 'text-amber-400' : 'text-slate-400'}`} />
-          <span>{hasBall ? 'Holding Ball (Release)' : 'Give Ball to Player'}</span>
+          <span>{hasBall ? t.inspector.releaseBall : t.inspector.giveBall}</span>
         </button>
 
         {/* Coordinate details */}

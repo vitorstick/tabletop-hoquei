@@ -7,9 +7,11 @@ import {
   Eye, 
   Maximize,
   HelpCircle,
-  Camera
+  Camera,
+  Languages
 } from 'lucide-react';
 import { useTacticsStore } from '../../store/useTacticsStore';
+import { useTranslation } from '../../i18n/useTranslation';
 
 interface HeaderProps {
   onOpenExportImport: () => void;
@@ -25,6 +27,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenExportImport }) => {
   const showBehindGoalClearance = useTacticsStore((s) => s.showBehindGoalClearance);
   const toggleBehindGoalClearance = useTacticsStore((s) => s.toggleBehindGoalClearance);
 
+  const { t, language, setLanguage, languages } = useTranslation();
   const [showHelp, setShowHelp] = useState(false);
 
   const handleExportPNG = () => {
@@ -61,20 +64,44 @@ export const Header: React.FC<HeaderProps> = ({ onOpenExportImport }) => {
         <div>
           <div className="flex items-center gap-2">
             <h1 className="font-bold text-sm text-slate-100 tracking-wide flex items-center gap-1.5">
-              Roller Hockey Tactics Board
+              {t.common.appTitle}
               <span className="text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded bg-red-500/20 text-red-400 border border-red-500/30">
-                World Skate 40×20
+                {t.common.badgeWorldSkate}
               </span>
             </h1>
           </div>
           <p className="text-[11px] text-slate-400">
-            Hóquei em Patins • Inset Net (3m clearance) • Step Sequencer
+            {t.common.appSubtitle}
           </p>
         </div>
       </div>
 
       {/* Quick Actions & Preferences */}
       <div className="flex items-center gap-2">
+        {/* Language Switcher */}
+        <div className="flex items-center bg-slate-800/80 rounded-lg p-0.5 border border-slate-700/60" title={t.header.languageSelect}>
+          <div className="pl-1.5 pr-1 text-slate-400">
+            <Languages className="w-3.5 h-3.5" />
+          </div>
+          {languages.map((lang) => (
+            <button
+              key={lang.code}
+              onClick={() => setLanguage(lang.code)}
+              className={`px-2 py-1 text-xs font-semibold rounded-md transition-all flex items-center gap-1 ${
+                language === lang.code
+                  ? 'bg-red-600 text-white shadow-sm'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+              title={lang.nativeName}
+            >
+              <span className="text-[11px] leading-none">{lang.flag}</span>
+              <span>{lang.label}</span>
+            </button>
+          ))}
+        </div>
+
+        <div className="h-5 w-px bg-slate-800 mx-0.5" />
+
         {/* Court Theme Selector */}
         <div className="flex items-center bg-slate-800/80 rounded-lg p-0.5 border border-slate-700/60">
           <button
@@ -84,9 +111,9 @@ export const Header: React.FC<HeaderProps> = ({ onOpenExportImport }) => {
                 ? 'bg-amber-600/30 text-amber-300 border border-amber-500/40'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
-            title="Parquet Wood Floor"
+            title={t.header.parquetFloor}
           >
-            Parquet Floor
+            {t.header.parquetFloor}
           </button>
           <button
             onClick={() => setRinkViewTheme('modern-dark')}
@@ -95,9 +122,9 @@ export const Header: React.FC<HeaderProps> = ({ onOpenExportImport }) => {
                 ? 'bg-slate-700 text-slate-200 border border-slate-600'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
-            title="Modern Dark Whiteboard"
+            title={t.header.darkWhiteboard}
           >
-            Dark Whiteboard
+            {t.header.darkWhiteboard}
           </button>
         </div>
 
@@ -109,7 +136,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenExportImport }) => {
               ? 'bg-sky-500/20 text-sky-400 border-sky-500/40'
               : 'bg-slate-800/80 text-slate-400 border-slate-700/60 hover:text-slate-200'
           }`}
-          title="Toggle Grid Overlay"
+          title={t.header.toggleGrid}
         >
           <Grid3X3 className="w-4 h-4" />
         </button>
@@ -122,7 +149,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenExportImport }) => {
               ? 'bg-amber-500/20 text-amber-400 border-amber-500/40'
               : 'bg-slate-800/80 text-slate-400 border-slate-700/60 hover:text-slate-200'
           }`}
-          title="Toggle 3m Behind-the-Net Highlight"
+          title={t.header.toggleBehindGoal}
         >
           <Eye className="w-4 h-4" />
         </button>
@@ -131,7 +158,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenExportImport }) => {
         <button
           onClick={flipSides}
           className="p-2 rounded-lg bg-slate-800/80 border border-slate-700/60 text-slate-400 hover:text-slate-200 hover:bg-slate-700/60 transition-colors"
-          title="Flip Home / Away Sides"
+          title={t.header.flipSides}
         >
           <ArrowLeftRight className="w-4 h-4" />
         </button>
@@ -140,7 +167,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenExportImport }) => {
         <button
           onClick={resetToInitial}
           className="p-2 rounded-lg bg-slate-800/80 border border-slate-700/60 text-slate-400 hover:text-red-400 hover:bg-slate-700/60 transition-colors"
-          title="Reset Tactics Board"
+          title={t.header.resetBoard}
         >
           <RotateCcw className="w-4 h-4" />
         </button>
@@ -151,7 +178,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenExportImport }) => {
         <button
           onClick={handleExportPNG}
           className="p-2 rounded-lg bg-slate-800/80 border border-slate-700/60 text-slate-400 hover:text-amber-400 hover:bg-slate-700/60 transition-colors"
-          title="Download PNG Screenshot"
+          title={t.header.downloadScreenshot}
         >
           <Camera className="w-4 h-4" />
         </button>
@@ -162,14 +189,14 @@ export const Header: React.FC<HeaderProps> = ({ onOpenExportImport }) => {
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-700/80 text-slate-200 hover:bg-slate-700 text-xs font-semibold shadow-sm transition-all hover:border-slate-600"
         >
           <Download className="w-3.5 h-3.5 text-red-400" />
-          <span>Save / Load</span>
+          <span>{t.header.saveLoad}</span>
         </button>
 
         {/* Fullscreen */}
         <button
           onClick={toggleFullscreen}
           className="p-2 rounded-lg bg-slate-800/80 border border-slate-700/60 text-slate-400 hover:text-slate-200 transition-colors"
-          title="Toggle Fullscreen"
+          title={t.header.toggleFullscreen}
         >
           <Maximize className="w-4 h-4" />
         </button>
@@ -178,7 +205,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenExportImport }) => {
         <button
           onClick={() => setShowHelp(!showHelp)}
           className="p-2 rounded-lg bg-slate-800/80 border border-slate-700/60 text-slate-400 hover:text-amber-300 transition-colors"
-          title="Tactical Board Help"
+          title={t.header.helpTitle}
         >
           <HelpCircle className="w-4 h-4" />
         </button>
@@ -188,15 +215,15 @@ export const Header: React.FC<HeaderProps> = ({ onOpenExportImport }) => {
       {showHelp && (
         <div className="fixed top-16 right-6 w-96 bg-slate-900/95 backdrop-blur-xl border border-slate-700 rounded-xl p-4 shadow-2xl z-50 text-slate-200">
           <div className="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
-            <h3 className="font-bold text-sm text-amber-400">Quick Guide: Roller Hockey Board</h3>
+            <h3 className="font-bold text-sm text-amber-400">{t.header.quickGuideTitle}</h3>
             <button onClick={() => setShowHelp(false)} className="text-slate-400 hover:text-slate-100 text-sm">✕</button>
           </div>
           <ul className="text-xs space-y-2 text-slate-300">
-            <li>🎯 <strong className="text-white">Drag Players & Ball:</strong> Select & drag anywhere on the 40×20m rink.</li>
-            <li>🔄 <strong className="text-white">Rotate Player:</strong> Click a player to show the yellow rotation handle ring, or use the inspector.</li>
-            <li>🏒 <strong className="text-white">Behind the Net:</strong> The goals are inset at 17m, allowing authentic 3m behind-the-net plays.</li>
-            <li>✏️ <strong className="text-white">Draw Vectors:</strong> Use Pass (dashed), Move (solid), or Curved routes.</li>
-            <li>⏱️ <strong className="text-white">Play Sequencer:</strong> Add steps to build multi-phase tactical plays with smooth animated playback.</li>
+            <li>🎯 <strong className="text-white">{t.header.guideDrag}:</strong> {t.header.guideDragDesc}</li>
+            <li>🔄 <strong className="text-white">{t.header.guideRotate}:</strong> {t.header.guideRotateDesc}</li>
+            <li>🏒 <strong className="text-white">{t.header.guideBehindNet}:</strong> {t.header.guideBehindNetDesc}</li>
+            <li>✏️ <strong className="text-white">{t.header.guideVectors}:</strong> {t.header.guideVectorsDesc}</li>
+            <li>⏱️ <strong className="text-white">{t.header.guideSequencer}:</strong> {t.header.guideSequencerDesc}</li>
           </ul>
         </div>
       )}

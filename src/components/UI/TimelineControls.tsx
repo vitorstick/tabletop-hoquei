@@ -13,6 +13,7 @@ import {
   Check
 } from 'lucide-react';
 import { useTacticsStore } from '../../store/useTacticsStore';
+import { useTranslation } from '../../i18n/useTranslation';
 
 const PlayheadProgressBar: React.FC = () => {
   const isPlaying = useTacticsStore((s) => s.isPlaying);
@@ -51,6 +52,8 @@ export const TimelineControls: React.FC = () => {
   const setPlaybackSpeed = useTacticsStore((s) => s.setPlaybackSpeed);
   const setLoopPlayback = useTacticsStore((s) => s.setLoopPlayback);
 
+  const { t } = useTranslation();
+
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editName, setEditName] = useState('');
 
@@ -84,7 +87,7 @@ export const TimelineControls: React.FC = () => {
             onClick={() => setStep(Math.max(0, currentStepIndex - 1))}
             disabled={currentStepIndex === 0 || isPlaying}
             className="p-2 rounded-xl bg-slate-800 border border-slate-700/70 text-slate-300 hover:text-white disabled:opacity-40 disabled:hover:text-slate-300 transition-colors"
-            title="Previous Step"
+            title={t.timeline.prevStep}
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
@@ -101,12 +104,12 @@ export const TimelineControls: React.FC = () => {
             {isPlaying ? (
               <>
                 <Pause className="w-4 h-4 fill-current" />
-                <span>Pause</span>
+                <span>{t.timeline.pause}</span>
               </>
             ) : (
               <>
                 <Play className="w-4 h-4 fill-current" />
-                <span>Play Sequence</span>
+                <span>{t.timeline.playSequence}</span>
               </>
             )}
           </button>
@@ -116,7 +119,7 @@ export const TimelineControls: React.FC = () => {
             onClick={() => setStep(Math.min(steps.length - 1, currentStepIndex + 1))}
             disabled={currentStepIndex === steps.length - 1 || isPlaying}
             className="p-2 rounded-xl bg-slate-800 border border-slate-700/70 text-slate-300 hover:text-white disabled:opacity-40 disabled:hover:text-slate-300 transition-colors"
-            title="Next Step"
+            title={t.timeline.nextStep}
           >
             <ChevronRight className="w-4 h-4" />
           </button>
@@ -129,7 +132,7 @@ export const TimelineControls: React.FC = () => {
                 ? 'bg-red-500/20 text-red-400 border-red-500/40'
                 : 'bg-slate-800 border-slate-700/70 text-slate-400 hover:text-slate-200'
             }`}
-            title="Loop Playback"
+            title={t.timeline.loopPlayback}
           >
             <Repeat className="w-4 h-4" />
           </button>
@@ -198,14 +201,14 @@ export const TimelineControls: React.FC = () => {
                     <button
                       onClick={() => handleStartRename(idx, step.name)}
                       className="text-white/70 hover:text-white p-0.5"
-                      title="Rename step"
+                      title={t.timeline.renameStep}
                     >
                       <Edit2 className="w-3 h-3" />
                     </button>
                     <button
                       onClick={() => duplicateStep(idx)}
                       className="text-white/70 hover:text-white p-0.5"
-                      title="Duplicate step"
+                      title={t.timeline.duplicateStep}
                     >
                       <Copy className="w-3 h-3" />
                     </button>
@@ -213,7 +216,7 @@ export const TimelineControls: React.FC = () => {
                       <button
                         onClick={() => deleteStep(idx)}
                         className="text-white/70 hover:text-red-200 p-0.5"
-                        title="Delete step"
+                        title={t.timeline.deleteStep}
                       >
                         <Trash2 className="w-3 h-3" />
                       </button>
@@ -229,10 +232,10 @@ export const TimelineControls: React.FC = () => {
             <button
               onClick={addStep}
               className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-750 border border-dashed border-slate-600 text-slate-300 hover:text-white text-xs font-semibold transition-all shrink-0 hover:border-red-400"
-              title="Add New Play Step"
+              title={t.timeline.addStep}
             >
               <Plus className="w-3.5 h-3.5 text-amber-400" />
-              <span>Add Step</span>
+              <span>{t.timeline.addStep}</span>
             </button>
           )}
         </div>
@@ -241,17 +244,17 @@ export const TimelineControls: React.FC = () => {
         {currentStep && (
           <div className="flex items-center gap-2 text-xs text-slate-400 shrink-0">
             <Clock className="w-3.5 h-3.5 text-slate-500" />
-            <span className="text-[11px]">Phase:</span>
+            <span className="text-[11px]">{t.timeline.phase}</span>
             <select
               value={currentStep.durationMs}
               onChange={(e) => setStepDuration(currentStepIndex, parseInt(e.target.value))}
               disabled={isPlaying}
               className="px-2 py-1 rounded-lg bg-slate-800 border border-slate-700 text-slate-200 text-xs font-mono focus:outline-none focus:border-red-500"
             >
-              <option value={800}>0.8s (Fast Cut)</option>
-              <option value={1200}>1.2s (Standard Pass)</option>
-              <option value={1800}>1.8s (Rotation)</option>
-              <option value={2500}>2.5s (Slow Build)</option>
+              <option value={800}>{t.timeline.durations.fastCut}</option>
+              <option value={1200}>{t.timeline.durations.standardPass}</option>
+              <option value={1800}>{t.timeline.durations.rotation}</option>
+              <option value={2500}>{t.timeline.durations.slowBuild}</option>
             </select>
           </div>
         )}

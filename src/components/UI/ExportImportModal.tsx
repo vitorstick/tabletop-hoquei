@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Copy, Check, Download, Upload, AlertCircle, FileJson } from 'lucide-react';
 import { useTacticsStore } from '../../store/useTacticsStore';
+import { useTranslation } from '../../i18n/useTranslation';
 
 interface ExportImportModalProps {
   isOpen: boolean;
@@ -10,6 +11,8 @@ interface ExportImportModalProps {
 export const ExportImportModal: React.FC<ExportImportModalProps> = ({ isOpen, onClose }) => {
   const exportStateJSON = useTacticsStore((s) => s.exportStateJSON);
   const importStateJSON = useTacticsStore((s) => s.importStateJSON);
+
+  const { t } = useTranslation();
 
   const [mode, setMode] = useState<'export' | 'import'>('export');
   const [copied, setCopied] = useState(false);
@@ -48,18 +51,18 @@ export const ExportImportModal: React.FC<ExportImportModalProps> = ({ isOpen, on
     setSuccessMsg(null);
 
     if (!importText.trim()) {
-      setErrorMsg('Please paste a valid JSON string.');
+      setErrorMsg(t.modal.errEmpty);
       return;
     }
 
     const success = importStateJSON(importText);
     if (success) {
-      setSuccessMsg('Tactical play loaded successfully!');
+      setSuccessMsg(t.modal.successLoaded);
       setTimeout(() => {
         onClose();
       }, 900);
     } else {
-      setErrorMsg('Invalid tactics JSON format. Please verify the structure.');
+      setErrorMsg(t.modal.errInvalid);
     }
   };
 
@@ -85,8 +88,8 @@ export const ExportImportModal: React.FC<ExportImportModalProps> = ({ isOpen, on
               <FileJson className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="font-bold text-sm text-white">Tactical Play JSON</h2>
-              <p className="text-xs text-slate-400">Export or import multi-phase whiteboard plays</p>
+              <h2 className="font-bold text-sm text-white">{t.modal.modalTitle}</h2>
+              <p className="text-xs text-slate-400">{t.modal.modalSubtitle}</p>
             </div>
           </div>
 
@@ -108,7 +111,7 @@ export const ExportImportModal: React.FC<ExportImportModalProps> = ({ isOpen, on
                 : 'border-transparent text-slate-400 hover:text-slate-200'
             }`}
           >
-            Export Play
+            {t.modal.tabExport}
           </button>
           <button
             onClick={() => setMode('import')}
@@ -118,7 +121,7 @@ export const ExportImportModal: React.FC<ExportImportModalProps> = ({ isOpen, on
                 : 'border-transparent text-slate-400 hover:text-slate-200'
             }`}
           >
-            Import Play
+            {t.modal.tabImport}
           </button>
         </div>
 
@@ -137,7 +140,7 @@ export const ExportImportModal: React.FC<ExportImportModalProps> = ({ isOpen, on
 
               <div className="flex items-center justify-between gap-3">
                 <span className="text-xs text-slate-400">
-                  Includes all keyframe steps, token coordinates, and vector drawings.
+                  {t.modal.exportNote}
                 </span>
                 <div className="flex items-center gap-2">
                   <button
@@ -145,14 +148,14 @@ export const ExportImportModal: React.FC<ExportImportModalProps> = ({ isOpen, on
                     className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-750 border border-slate-700 text-slate-200 text-xs font-semibold transition-colors"
                   >
                     {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                    <span>{copied ? 'Copied!' : 'Copy JSON'}</span>
+                    <span>{copied ? t.modal.copied : t.modal.copyJSON}</span>
                   </button>
                   <button
                     onClick={handleDownload}
                     className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-semibold shadow-md shadow-red-600/30 transition-colors"
                   >
                     <Download className="w-3.5 h-3.5" />
-                    <span>Download .json</span>
+                    <span>{t.modal.downloadJSON}</span>
                   </button>
                 </div>
               </div>
@@ -161,7 +164,7 @@ export const ExportImportModal: React.FC<ExportImportModalProps> = ({ isOpen, on
             <>
               <div className="flex flex-col gap-2">
                 <textarea
-                  placeholder="Paste tactical JSON content here..."
+                  placeholder={t.modal.importPlaceholder}
                   value={importText}
                   onChange={(e) => setImportText(e.target.value)}
                   rows={8}
@@ -171,7 +174,7 @@ export const ExportImportModal: React.FC<ExportImportModalProps> = ({ isOpen, on
                 <div className="flex items-center justify-between">
                   <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-slate-300 text-xs font-medium hover:bg-slate-750 cursor-pointer transition-colors">
                     <Upload className="w-3.5 h-3.5 text-amber-400" />
-                    <span>Upload .json File</span>
+                    <span>{t.modal.uploadFile}</span>
                     <input
                       type="file"
                       accept=".json"
@@ -201,13 +204,13 @@ export const ExportImportModal: React.FC<ExportImportModalProps> = ({ isOpen, on
                   onClick={onClose}
                   className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-300 text-xs font-semibold transition-colors"
                 >
-                  Cancel
+                  {t.modal.cancel}
                 </button>
                 <button
                   onClick={handleImport}
                   className="px-5 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-semibold shadow-md shadow-red-600/30 transition-colors"
                 >
-                  Load Play
+                  {t.modal.loadPlay}
                 </button>
               </div>
             </>

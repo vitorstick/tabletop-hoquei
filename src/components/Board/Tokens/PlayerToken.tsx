@@ -4,6 +4,7 @@ import { ThreeEvent } from '@react-three/fiber';
 import { Text, Line } from '@react-three/drei';
 import { useTacticsStore } from '../../../store/useTacticsStore';
 import { RINK_DIMENSIONS } from '../../../constants/rinkDimensions';
+import { useTranslation } from '../../../i18n/useTranslation';
 
 interface PlayerTokenProps {
   id: string;
@@ -30,6 +31,7 @@ export const PlayerToken: React.FC<PlayerTokenProps> = React.memo(({
   const metadata = useTacticsStore((s) => s.playersMetadata[id]);
   const isPlaying = useTacticsStore((s) => s.isPlaying);
   const hasBall = useTacticsStore((s) => s.steps[s.currentStepIndex]?.ballAttachedTo === id);
+  const { t } = useTranslation();
 
   const [isHovered, setIsHovered] = useState(false);
 
@@ -147,7 +149,7 @@ export const PlayerToken: React.FC<PlayerTokenProps> = React.memo(({
         anchorY="middle"
         fontWeight="bold"
       >
-        {isGK ? 'GK' : String(metadata?.number ?? id)}
+        {isGK ? t.common.gkShort : String(metadata?.number ?? id)}
       </Text>
 
       {/* Player ID / Small Sub-label */}
