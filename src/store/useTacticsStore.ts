@@ -276,6 +276,10 @@ export const useTacticsStore = create<BoardState>((set, get) => ({
     set((state) => ({ showCourtGrid: !state.showCourtGrid }));
   },
 
+  toggleBehindGoalClearance: () => {
+    set((state) => ({ showBehindGoalClearance: !state.showBehindGoalClearance }));
+  },
+
   setRinkViewTheme: (theme) => {
     set({ rinkViewTheme: theme });
   },
@@ -367,7 +371,7 @@ export const useTacticsStore = create<BoardState>((set, get) => ({
       id: `step-${Date.now()}`,
       name: `Step ${newStepIndex + 1}: Rotation / Action`,
       durationMs: 1500,
-      players: JSON.parse(JSON.stringify(currentStep.players)),
+      players: structuredClone(currentStep.players),
       ball: { ...currentStep.ball },
       ballAttachedTo: currentStep.ballAttachedTo,
       annotations: []
@@ -385,7 +389,7 @@ export const useTacticsStore = create<BoardState>((set, get) => ({
     if (!targetStep) return;
 
     const newStep: PlayStep = {
-      ...JSON.parse(JSON.stringify(targetStep)),
+      ...structuredClone(targetStep),
       id: `step-${Date.now()}`,
       name: `${targetStep.name} (Copy)`
     };
@@ -472,8 +476,21 @@ export const useTacticsStore = create<BoardState>((set, get) => ({
         return false;
       }
 
+      // Defensive validation for steps structure
+      const sanitizedSteps: PlayStep[] = data.steps.map((step, idx) => ({
+        id: typeof step.id === 'string' ? step.id : `step-${Date.now()}-${idx}`,
+        name: typeof step.name === 'string' ? step.name : `Step ${idx + 1}`,
+        durationMs: typeof step.durationMs === 'number' && step.durationMs > 0 ? step.durationMs : 1500,
+        players: (step.players && typeof step.players === 'object') ? step.players : defaultInitialStep.players,
+        ball: (step.ball && typeof step.ball.x === 'number' && typeof step.ball.z === 'number')
+          ? { x: step.ball.x, z: step.ball.z }
+          : { x: -2.0, z: 0 },
+        ballAttachedTo: typeof step.ballAttachedTo === 'string' ? step.ballAttachedTo : null,
+        annotations: Array.isArray(step.annotations) ? step.annotations : []
+      }));
+
       set({
-        steps: data.steps,
+        steps: sanitizedSteps,
         currentStepIndex: 0,
         playersMetadata: data.playersMetadata || initialPlayersMetadata,
         isPlaying: false,

@@ -26,7 +26,7 @@ export const PlayerInspector: React.FC = () => {
   };
 
   return (
-    <div className="absolute top-4 right-4 z-40 w-72 bg-slate-900/95 backdrop-blur-xl border border-slate-800 rounded-xl p-3.5 shadow-2xl ring-1 ring-white/10 select-none animate-in fade-in slide-in-from-right-3 duration-150">
+    <div className="absolute top-16 right-4 z-40 w-72 bg-slate-900/95 backdrop-blur-xl border border-slate-800 rounded-xl p-3.5 shadow-2xl ring-1 ring-white/10 select-none animate-in fade-in slide-in-from-right-3 duration-150">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
         <div className="flex items-center gap-2">

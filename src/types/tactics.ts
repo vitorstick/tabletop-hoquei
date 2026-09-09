@@ -87,6 +87,7 @@ export interface BoardState {
   removeAnnotation: (id: string) => void;
   clearAnnotations: () => void;
   toggleCourtGrid: () => void;
+  toggleBehindGoalClearance: () => void;
   setRinkViewTheme: (theme: 'parquet' | 'modern-dark') => void;
 
   // Actions - Formations & Presets

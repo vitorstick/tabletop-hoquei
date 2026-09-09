@@ -6,7 +6,8 @@ import {
   Grid3X3, 
   Eye, 
   Maximize,
-  HelpCircle
+  HelpCircle,
+  Camera
 } from 'lucide-react';
 import { useTacticsStore } from '../../store/useTacticsStore';
 
@@ -22,8 +23,25 @@ export const Header: React.FC<HeaderProps> = ({ onOpenExportImport }) => {
   const rinkTheme = useTacticsStore((s) => s.rinkViewTheme);
   const setRinkViewTheme = useTacticsStore((s) => s.setRinkViewTheme);
   const showBehindGoalClearance = useTacticsStore((s) => s.showBehindGoalClearance);
+  const toggleBehindGoalClearance = useTacticsStore((s) => s.toggleBehindGoalClearance);
 
   const [showHelp, setShowHelp] = useState(false);
+
+  const handleExportPNG = () => {
+    const canvas = document.querySelector('canvas');
+    if (!canvas) return;
+    try {
+      const dataUrl = canvas.toDataURL('image/png');
+      const a = document.createElement('a');
+      a.href = dataUrl;
+      a.download = `roller-hockey-tactic-${new Date().toISOString().slice(0, 10)}.png`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } catch {
+      // Canvas may be tainted or unavailable
+    }
+  };
 
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
@@ -98,7 +116,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenExportImport }) => {
 
         {/* Behind Net Clearance Indicator */}
         <button
-          onClick={() => useTacticsStore.setState({ showBehindGoalClearance: !showBehindGoalClearance })}
+          onClick={toggleBehindGoalClearance}
           className={`p-2 rounded-lg border transition-all ${
             showBehindGoalClearance
               ? 'bg-amber-500/20 text-amber-400 border-amber-500/40'
@@ -128,6 +146,15 @@ export const Header: React.FC<HeaderProps> = ({ onOpenExportImport }) => {
         </button>
 
         <div className="h-5 w-px bg-slate-800 mx-1" />
+
+        {/* Export Image Snapshot */}
+        <button
+          onClick={handleExportPNG}
+          className="p-2 rounded-lg bg-slate-800/80 border border-slate-700/60 text-slate-400 hover:text-amber-400 hover:bg-slate-700/60 transition-colors"
+          title="Download PNG Screenshot"
+        >
+          <Camera className="w-4 h-4" />
+        </button>
 
         {/* Export / Import JSON */}
         <button

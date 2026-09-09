@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { ThreeEvent } from '@react-three/fiber';
 import { Line, QuadraticBezierLine } from '@react-three/drei';
 import { TacticalAnnotation, Vector2D } from '../../../types/tactics';
 import { useTacticsStore } from '../../../store/useTacticsStore';
@@ -44,7 +45,7 @@ export const TacticalAnnotations: React.FC<TacticalAnnotationsProps> = ({
     const end = ann.points[ann.points.length - 1];
     const color = ann.color || '#fbbf24';
 
-    const handleAnnotationClick = (e: any) => {
+    const handleAnnotationClick = (e: ThreeEvent<MouseEvent>) => {
       if (activeTool === 'erase') {
         e.stopPropagation();
         removeAnnotation(ann.id);

@@ -14,12 +14,31 @@ import {
 } from 'lucide-react';
 import { useTacticsStore } from '../../store/useTacticsStore';
 
+const PlayheadProgressBar: React.FC = () => {
+  const isPlaying = useTacticsStore((s) => s.isPlaying);
+  const playbackProgress = useTacticsStore((s) => s.playbackProgress);
+  const currentStepIndex = useTacticsStore((s) => s.currentStepIndex);
+  const totalSteps = useTacticsStore((s) => s.steps.length);
+
+  if (!isPlaying) return null;
+
+  return (
+    <div className="w-full bg-slate-800/80 backdrop-blur-md rounded-full h-1.5 overflow-hidden border border-slate-700/50">
+      <div
+        className="h-full bg-gradient-to-r from-red-500 via-amber-400 to-red-500 transition-all duration-75 ease-linear"
+        style={{
+          width: `${((currentStepIndex + playbackProgress) / Math.max(1, totalSteps)) * 100}%`
+        }}
+      />
+    </div>
+  );
+};
+
 export const TimelineControls: React.FC = () => {
   const steps = useTacticsStore((s) => s.steps);
   const currentStepIndex = useTacticsStore((s) => s.currentStepIndex);
   const isPlaying = useTacticsStore((s) => s.isPlaying);
   const playbackSpeed = useTacticsStore((s) => s.playbackSpeed);
-  const playbackProgress = useTacticsStore((s) => s.playbackProgress);
   const loopPlayback = useTacticsStore((s) => s.loopPlayback);
 
   const addStep = useTacticsStore((s) => s.addStep);
@@ -54,16 +73,7 @@ export const TimelineControls: React.FC = () => {
   return (
     <div className="absolute bottom-4 left-4 right-4 z-30 pointer-events-auto select-none flex flex-col gap-2">
       {/* Playhead Progress Bar (Active when Playing) */}
-      {isPlaying && (
-        <div className="w-full bg-slate-800/80 backdrop-blur-md rounded-full h-1.5 overflow-hidden border border-slate-700/50">
-          <div
-            className="h-full bg-gradient-to-r from-red-500 via-amber-400 to-red-500 transition-all duration-75 ease-linear"
-            style={{
-              width: `${((currentStepIndex + playbackProgress) / Math.max(1, steps.length)) * 100}%`
-            }}
-          />
-        </div>
-      )}
+      <PlayheadProgressBar />
 
       {/* Main Timeline Bar */}
       <div className="bg-slate-900/90 backdrop-blur-md border border-slate-800 rounded-2xl p-3 shadow-2xl ring-1 ring-white/10 flex flex-col md:flex-row items-center justify-between gap-3">

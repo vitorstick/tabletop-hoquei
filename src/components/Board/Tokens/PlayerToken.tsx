@@ -11,7 +11,14 @@ interface PlayerTokenProps {
   rotation: number;
 }
 
-export const PlayerToken: React.FC<PlayerTokenProps> = ({
+const CHEVRON_RADIUS = RINK_DIMENSIONS.PLAYER_RADIUS * 0.95;
+const BASE_CHEVRON_POINTS: [number, number, number][] = [
+  [Math.cos(0.5) * CHEVRON_RADIUS, 0.23, Math.sin(0.5) * CHEVRON_RADIUS],
+  [CHEVRON_RADIUS + 0.35, 0.23, 0],
+  [Math.cos(-0.5) * CHEVRON_RADIUS, 0.23, Math.sin(-0.5) * CHEVRON_RADIUS]
+];
+
+export const PlayerToken: React.FC<PlayerTokenProps> = React.memo(({
   id,
   position,
   rotation
@@ -22,14 +29,13 @@ export const PlayerToken: React.FC<PlayerTokenProps> = ({
   const activeTool = useTacticsStore((s) => s.activeTool);
   const metadata = useTacticsStore((s) => s.playersMetadata[id]);
   const isPlaying = useTacticsStore((s) => s.isPlaying);
-  const currentStep = useTacticsStore((s) => s.steps[s.currentStepIndex]);
+  const hasBall = useTacticsStore((s) => s.steps[s.currentStepIndex]?.ballAttachedTo === id);
 
   const [isHovered, setIsHovered] = useState(false);
 
   const isSelected = selectedTokenId === id;
   const isHome = metadata?.team === 'home';
   const isGK = metadata?.role === 'GK';
-  const hasBall = currentStep?.ballAttachedTo === id;
 
   // Primary & secondary team colors
   const mainColor = isHome ? '#e63946' : '#1d3557';
@@ -65,10 +71,10 @@ export const PlayerToken: React.FC<PlayerTokenProps> = ({
     });
   }, [isPlaying, id, setDraggedItem]);
 
-  // Direction chevron indicator coordinates
-  const chevronRadius = RINK_DIMENSIONS.PLAYER_RADIUS * 0.95;
-  const tipX = Math.cos(rotation) * (chevronRadius + 0.35);
-  const tipZ = Math.sin(rotation) * (chevronRadius + 0.35);
+  // Direction handle coordinates
+  const handleDistance = (CHEVRON_RADIUS + 0.35) * 1.35;
+  const handleX = Math.cos(rotation) * handleDistance;
+  const handleZ = Math.sin(rotation) * handleDistance;
 
   return (
     <group
@@ -123,15 +129,13 @@ export const PlayerToken: React.FC<PlayerTokenProps> = ({
       </mesh>
 
       {/* Direction Chevron Arrow pointing forward */}
-      <Line
-        points={[
-          [Math.cos(rotation + 0.5) * chevronRadius, 0.23, Math.sin(rotation + 0.5) * chevronRadius],
-          [tipX, 0.23, tipZ],
-          [Math.cos(rotation - 0.5) * chevronRadius, 0.23, Math.sin(rotation - 0.5) * chevronRadius]
-        ]}
-        color="#fbbf24"
-        lineWidth={4}
-      />
+      <group rotation={[0, -rotation, 0]}>
+        <Line
+          points={BASE_CHEVRON_POINTS}
+          color="#fbbf24"
+          lineWidth={4}
+        />
+      </group>
 
       {/* Player Number Label (Large & Crisp) */}
       <Text
@@ -161,7 +165,7 @@ export const PlayerToken: React.FC<PlayerTokenProps> = ({
       {/* Interactive Rotation Drag Handle (Visible when Selected and Not Playing) */}
       {isSelected && !isPlaying && (
         <group
-          position={[tipX * 1.35, 0.25, tipZ * 1.35]}
+          position={[handleX, 0.25, handleZ]}
           onPointerDown={handleRotateDown}
         >
           <mesh rotation={[-Math.PI / 2, 0, 0]}>
@@ -176,4 +180,6 @@ export const PlayerToken: React.FC<PlayerTokenProps> = ({
       )}
     </group>
   );
-};
+});
+
+PlayerToken.displayName = 'PlayerToken';

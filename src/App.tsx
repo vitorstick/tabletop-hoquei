@@ -6,9 +6,13 @@ import { PlayerInspector } from './components/UI/PlayerInspector';
 import { TimelineControls } from './components/UI/TimelineControls';
 import { ExportImportModal } from './components/UI/ExportImportModal';
 import { TacticsCanvas } from './components/Board/TacticsCanvas';
+import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 
 export const App: React.FC = () => {
   const [isExportImportOpen, setIsExportImportOpen] = useState(false);
+
+  // Enable global tactical whiteboard hotkeys (Space to play/pause, 1-6 tools, arrows)
+  useKeyboardShortcuts();
 
   return (
     <div className="flex flex-col h-screen w-screen bg-slate-950 text-slate-100 overflow-hidden select-none font-sans">

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import * as THREE from 'three';
 import { Line } from '@react-three/drei';
 import { RINK_DIMENSIONS } from '../../../constants/rinkDimensions';
@@ -121,6 +121,13 @@ export const RinkFloor: React.FC = () => {
     tex.anisotropy = 8;
     return tex;
   }, [rinkTheme]);
+
+  // Clean up WebGL texture memory on theme switch or unmount
+  useEffect(() => {
+    return () => {
+      floorTexture?.dispose();
+    };
+  }, [floorTexture]);
 
   // Rounded boundary points
   const boundaryPoints = useMemo(() => {
